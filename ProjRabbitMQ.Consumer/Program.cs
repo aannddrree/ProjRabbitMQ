@@ -1,5 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using Newtonsoft.Json;
+using ProjRabbitMQ.Consumer.Services;
 using ProjRabbitMQ.Models;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -27,7 +28,9 @@ using (var connection = factory.CreateConnection())
                 var body = ea.Body.ToArray();
                 var returnMessage = Encoding.UTF8.GetString(body);
                 var message = JsonConvert.DeserializeObject<Message>(returnMessage);
-                Console.WriteLine("Description: " + message.Description);
+                Message msg = new MessageService().PostMessage(message).Result;
+                Console.WriteLine("Message: " + msg.Description);
+                
             };
 
             channel.BasicConsume(queue: QUEUE_NAME,
